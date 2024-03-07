@@ -1,0 +1,33 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int main() {
+    int n;
+    cin >> n;
+    string s;
+    cin >> s;
+    int k;
+    cin >> k;
+    
+    char arr[n];
+    int loop = k % 26;
+    string testLower = "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz";
+    string testUpper = "ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    for (int i = 0; i < n; i++) {
+        arr[i] = s[i];
+        for (int j = 0; j < 26; j++) {
+            if (!((arr[i] >= 'a' && arr[i] <= 'z') || (arr[i] >= 'A' && arr[i] <= 'Z'))) break;
+            if (arr[i] == testLower[j]) {
+                arr[i] = testLower[j + loop];
+                break;
+            } else if (arr[i] == testUpper[j]) {
+                arr[i] = testUpper[j + loop];
+                break;
+            }
+        }
+        cout << arr[i];
+    }
+}
+
+

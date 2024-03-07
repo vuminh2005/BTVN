@@ -1,0 +1,22 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int main() {
+    int q;
+    cin >> q;
+    string test = "hackerrank";
+    while (q--) {
+        string s;
+        cin >> s;
+        int j = 0;
+        for (int i = 0; i < s.size() && j < test.size(); i++) {
+            if (s[i] == test[j]) {
+                j++;
+            }
+        }
+        (j == test.size()) ? cout << "YES" << endl : cout << "NO" << endl;
+    }
+}
+
+
