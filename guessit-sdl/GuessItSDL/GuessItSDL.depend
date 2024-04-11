@@ -1,0 +1,15 @@
+# depslib dependency file v1.0
+1711463320 source:c:\users\admin\desktop\uet\advanced programming\code\guessit-sdl\guessitsdl\sdl.cpp
+	"sdl.h"
+
+1711352467 c:\users\admin\desktop\uet\advanced programming\code\guessit-sdl\guessitsdl\sdl.h
+	<bits/stdc++.h>
+	<SDL.h>
+
+1711463326 source:c:\users\admin\desktop\uet\advanced programming\code\guessit-sdl\guessitsdl\game-screen.cpp
+	<bits/stdc++.h>
+	"game-screen.h"
+	"sdl.h"
+
+1711420855 c:\users\admin\desktop\uet\advanced programming\code\guessit-sdl\guessitsdl\game-screen.h
+

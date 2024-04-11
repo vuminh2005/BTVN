@@ -3,170 +3,218 @@
 
 using namespace std;
 
-const int SCREEN_WIDTH = 800;
-const int SCREEN_HEIGHT = 1000;
-const char* WINDOW_TITLE = "Hello World!";
+string guess;
+string secretWord;
+string guessWord;
 
-void logErrorAndExit(const char* msg, const char* error)
+string readGuess()
 {
-    SDL_LogMessage(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_ERROR, "%s: %s", msg, error);
-    SDL_Quit();
+    cin >> guess;
+    return guess;
 }
 
-SDL_Window* initSDL(int SCREEN_WIDTH, int SCREEN_HEIGHT, const char* WINDOW_TITLE)
+const string WORD_LIST[] = {
+	"angle", "ant", "apple", "arch", "arm", "army",
+        "baby", "bag", "ball", "band", "basin", "basket", "bath", "bed", "bee", "bell", "berry",
+        "bird", "blade", "board", "boat", "bone", "book", "boot", "bottle", "box", "boy",
+        "brain", "brake", "branch", "brick", "bridge", "brush", "bucket", "bulb", "button",
+        "cake", "camera", "card",  "cart", "carriage", "cat", "chain", "cheese", "chest",
+        "chin", "church", "circle", "clock", "cloud", "coat", "collar", "comb", "cord",
+        "cow", "cup", "curtain", "cushion",
+        "dog", "door", "drain", "drawer", "dress", "drop", "ear", "egg", "engine", "eye",
+        "face", "farm", "feather", "finger", "fish", "flag", "floor", "fly",
+        "foot", "fork", "fowl", "frame",
+        "garden", "girl", "glove", "goat", "gun",
+        "hair", "hammer", "hand", "hat", "head", "heart", "hook", "horn", "horse",
+        "hospital", "house",
+        "island", "jewel",
+        "kettle", "key", "knee", "knife", "knot",
+        "leaf", "leg", "library", "line", "lip", "lock",
+        "map", "match", "monkey", "moon", "mouth", "muscle",
+        "nail", "neck", "needle", "nerve", "net", "nose", "nut",
+        "office", "orange", "oven", "parcel", "pen", "pencil", "picture", "pig", "pin",
+        "pipe", "plane", "plate", "plow", "pocket", "pot", "potato", "prison", "pump",
+        "rail", "rat", "receipt", "ring", "rod", "roof", "root",
+        "sail", "school", "scissors", "screw", "seed", "sheep", "shelf", "ship", "shirt",
+        "shoe", "skin", "skirt", "snake", "sock", "spade", "sponge", "spoon", "spring",
+        "square", "stamp", "star", "station", "stem", "stick", "stocking", "stomach",
+        "store", "street", "sun",
+        "table", "tail", "thread", "throat", "thumb", "ticket", "toe", "tongue", "tooth",
+        "town", "train", "tray", "tree", "trousers",
+        "umbrella",
+        "wall", "watch", "wheel", "whip", "whistle", "window", "wire", "wing", "worm"};
+const int WORD_COUNT = sizeof(WORD_LIST) / sizeof(string);
+
+string chooseWord()
 {
-    if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
-        logErrorAndExit("SDL_Init", SDL_GetError());
-
-    SDL_Window* window = SDL_CreateWindow(WINDOW_TITLE, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
-    //full screen
-    //window = SDL_CreateWindow(WINDOW_TITLE, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_FULLSCREEN_DESKTOP);
-    if (window == nullptr) logErrorAndExit("CreateWindow", SDL_GetError());
-
-    return window;
+	int randomIndex = rand() % WORD_COUNT;
+    return WORD_LIST[randomIndex];
 }
 
-SDL_Renderer* createRenderer(SDL_Window* window)
+const string FIGURE[] = {
+        "   -------------    \n"
+        "   |                \n"
+        "   |                \n"
+        "   |                \n"
+        "   |                \n"
+        "   |     \n"
+        " -----   \n",
+        "   -------------    \n"
+        "   |           |    \n"
+        "   |                \n"
+        "   |                \n"
+        "   |                \n"
+        "   |     \n"
+        " -----   \n",
+        "   -------------    \n"
+        "   |           |    \n"
+        "   |           O    \n"
+        "   |                \n"
+        "   |                \n"
+        "   |     \n"
+        " -----   \n",
+        "   -------------    \n"
+        "   |           |    \n"
+        "   |           O    \n"
+        "   |           |    \n"
+        "   |                \n"
+        "   |     \n"
+        " -----   \n",
+        "   -------------    \n"
+        "   |           |    \n"
+        "   |           O    \n"
+        "   |          /|    \n"
+        "   |                \n"
+        "   |     \n"
+        " -----   \n",
+        "   -------------    \n"
+        "   |           |    \n"
+        "   |           O    \n"
+        "   |          /|\\  \n"
+        "   |                \n"
+        "   |     \n"
+        " -----   \n",
+        "   -------------    \n"
+        "   |           |    \n"
+        "   |           O    \n"
+        "   |          /|\\  \n"
+        "   |          /     \n"
+        "   |     \n"
+        " -----   \n",
+        "   -------------    \n"
+        "   |           |    \n"
+        "   |           O    \n"
+        "   |          /|\\  \n"
+        "   |          / \\  \n"
+        "   |     \n"
+        " -----   \n"
+    };
+
+void renderGame(int attempt)
 {
-    SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED |
-                                              SDL_RENDERER_PRESENTVSYNC);
-    //Khi chạy trong máy ảo (ví dụ phòng máy ở trường)
-    //renderer = SDL_CreateSoftwareRenderer(SDL_GetWindowSurface(window));
-
-    if (renderer == nullptr) logErrorAndExit("CreateRenderer", SDL_GetError());
-
-    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
-    SDL_RenderSetLogicalSize(renderer, SCREEN_WIDTH, SCREEN_HEIGHT);
-
-    return renderer;
+    cout << FIGURE[attempt] << endl;
+    cout << guessWord << endl;
+    cout << "Guess a character (" << 7 - attempt << " chance(s) left):" << endl;
 }
 
-void quitSDL(SDL_Window* window, SDL_Renderer* renderer)
+bool readAndCheck()
 {
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(window);
-    SDL_Quit();
-}
-
-void waitUntilKeyPressed()
-{
-    SDL_Event e;
-    while (true) {
-        if ( SDL_PollEvent(&e) != 0 &&
-             (e.type == SDL_KEYDOWN || e.type == SDL_QUIT) )
-            return;
-        SDL_Delay(100);
-    }
-}
-
-void drawHangman(SDL_Window* window, SDL_Renderer* renderer, int attempt)
-{
-    int centerX = 550;
-    int centerY = 350;
-    int radius = 50;
-
-    SDL_Rect bot, mid, top;
-    bot.x = 100;
-    bot.y = 650;
-    bot.w = 200;
-    bot.h = 50;
-    mid.x = 175;
-    mid.y = 150;
-    mid.w = 50;
-    mid.h = 500;
-    top.x = 175;
-    top.y = 100;
-    top.w = 400;
-    top.h = 50;
-    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-    SDL_RenderFillRect(renderer, &bot);
-    SDL_RenderFillRect(renderer, &mid);
-    SDL_RenderFillRect(renderer, &top);
-
-    switch (attempt) {
-        case 7:
-            SDL_RenderDrawLine(renderer, 550, 500, 600, 600);
-        case 6:
-            SDL_RenderDrawLine(renderer, 550, 500, 500, 600);
-        case 5:
-            SDL_RenderDrawLine(renderer, 550, 425, 625, 450);
-        case 4:
-            SDL_RenderDrawLine(renderer, 550, 425, 475, 450);
-        case 3:
-            SDL_RenderDrawLine(renderer, 550, 400, 550, 500);
-        case 2:
-            for (int y = -radius; y <= radius; y++) {
-                for (int x = -radius; x <= radius; x++) {
-                    if (x * x + y * y <= radius * radius) {
-                        SDL_RenderDrawPoint(renderer, centerX + x, centerY + y);
-                    }
-                }
+    readGuess();
+    if (guess.size() != 1) cout << "You can only choose 1 character at a time!" << endl;
+    else {
+        const char *check = guess.c_str();
+        for (int i = 0; i < secretWord.size(); i++) {
+            if (*check == secretWord[i]) {
+                guessWord[i] = *check;
+                return true;
             }
-        case 1:
-            SDL_RenderDrawLine(renderer, 550, 150, 550, 300);
-            break;
+        }
+    }
+    return false;
+}
+
+void wordCheck()
+{
+    if (guessWord == secretWord) {
+        cout << "Congratulations! You win!!!" << endl
+            << "The word is: " << secretWord;
     }
 }
 
-//    SDL_Window* window = initSDL(SCREEN_WIDTH, SCREEN_HEIGHT, WINDOW_TITLE);
-//    SDL_Renderer* renderer = createRenderer(window);
-//
-//    SDL_RenderClear(renderer);
-
-//    drawHangman(window, renderer, attempt);
-
-//    SDL_RenderPresent(renderer);
-
-//    waitUntilKeyPressed();
-//    quitSDL(window, renderer);
+void attemptCheck(int attempt)
+{
+    if (attempt == 7) {
+        cout << "You lose!!! Better luck next time!" << endl
+            << "The word is: " << secretWord;
+    }
+}
 
 int main(int argc, char* argv[])
 {
-//    SDL_Window* window = initSDL(SCREEN_WIDTH, SCREEN_HEIGHT, WINDOW_TITLE);
-//    SDL_Renderer* renderer = createRenderer(window);
-
+    srand(time(0));
     int attempt = 0;
-    string secretWord = "hangman";
-    string guessWord = "_______";
-
+    secretWord = chooseWord();
+    guessWord = string(secretWord.length(), '-');
 
     while (attempt < 7 && guessWord != secretWord) {
-//        SDL_RenderClear(renderer);
-//
-//        drawHangman(window, renderer, attempt);
-//
-//        SDL_RenderPresent(renderer);
+        renderGame(attempt);
 
-        int counts = 0;
-        cout << guessWord << endl;
-        cout << "Guess a character (" << 7 - attempt << " chance(s) left):";
+        if (readAndCheck()) {
+            wordCheck();
+            continue;
+        } else attempt++;
 
-        char guess;
-        cin >> guess;
-
-        for (int i = 0; i < secretWord.size(); i++) {
-            if (guess == secretWord[i]) {
-                guessWord[i] = guess;
-                counts++;
-            }
-        }
-
-        if (guessWord == secretWord) {
-            cout << "Congratulations! You win!!!" << endl
-                << "The word is: " << secretWord;
-            return 1;
-        }
-        if (counts) continue;
-        else attempt++;
-        if (attempt == 7) {
-            cout << "You lose!!! Better luck next time!" << endl
-                << "The word is: " << secretWord;
-            return -1;
-        }
+        attemptCheck(attempt);
     }
-
-//    waitUntilKeyPressed();
-//    quitSDL(window, renderer);
 
     return 0;
 }
+
+//void drawHangman(SDL_Window* window, SDL_Renderer* renderer, int attempt)
+//{
+//    int centerX = 550;
+//    int centerY = 350;
+//    int radius = 50;
+//
+//    SDL_Rect bot, mid, top;
+//    bot.x = 100;
+//    bot.y = 650;
+//    bot.w = 200;
+//    bot.h = 50;
+//    mid.x = 175;
+//    mid.y = 150;
+//    mid.w = 50;
+//    mid.h = 500;
+//    top.x = 175;
+//    top.y = 100;
+//    top.w = 400;
+//    top.h = 50;
+//    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+//    SDL_RenderFillRect(renderer, &bot);
+//    SDL_RenderFillRect(renderer, &mid);
+//    SDL_RenderFillRect(renderer, &top);
+//
+//    switch (attempt) {
+//        case 7:
+//            SDL_RenderDrawLine(renderer, 550, 500, 600, 600);
+//        case 6:
+//            SDL_RenderDrawLine(renderer, 550, 500, 500, 600);
+//        case 5:
+//            SDL_RenderDrawLine(renderer, 550, 425, 625, 450);
+//        case 4:
+//            SDL_RenderDrawLine(renderer, 550, 425, 475, 450);
+//        case 3:
+//            SDL_RenderDrawLine(renderer, 550, 400, 550, 500);
+//        case 2:
+//            for (int y = -radius; y <= radius; y++) {
+//                for (int x = -radius; x <= radius; x++) {
+//                    if (x * x + y * y <= radius * radius) {
+//                        SDL_RenderDrawPoint(renderer, centerX + x, centerY + y);
+//                    }
+//                }
+//            }
+//        case 1:
+//            SDL_RenderDrawLine(renderer, 550, 150, 550, 300);
+//            break;
+//    }
+//}
