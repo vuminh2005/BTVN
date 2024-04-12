@@ -1,0 +1,28 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+    vector<int> arr;
+    int size;
+    cin >> size;
+    arr.resize(size);
+    for (int i = 0; i < size; i++) cin >> arr[i];
+    
+    int q;
+    cin >> q;
+    while (q--) {
+        int check;
+        cin >> check;
+        auto it = lower_bound(arr.begin(), arr.end(), check);
+        int index = distance(arr.begin(), it);
+        if (*it == check) {
+            cout << "Yes " << index + 1 << endl;
+            continue;
+        }
+        cout << "No " << index + 1 << endl;
+    }
+     
+    return 0;
+}
+
+

@@ -1,0 +1,33 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+    /* Enter your code here. Read input from STDIN. Print output to STDOUT */  
+    int q;
+    cin >> q;
+    map<string, int> m;
+    
+    while (q--) {
+        int type;
+        cin >> type;
+        string str;
+        cin >> str;
+        if (type == 1) {
+            int i;
+            cin >> i;
+            m[str] += i;
+        }
+        else if (type == 2) m.erase(str);
+        else {
+            auto itr = m.find(str);
+            if (itr == m.end()) cout << 0 << endl;
+            else cout << m[str] << endl;
+        }
+    }
+     
+    return 0;
+}
+
+
+
+
