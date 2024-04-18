@@ -1,0 +1,72 @@
+# depslib dependency file v1.0
+1712914321 source:c:\users\admin\desktop\uet\advanced programming\code\tetris\sdl.cpp
+	<bits/stdc++.h>
+	<SDL.h>
+
+1713436419 source:c:\users\admin\desktop\uet\advanced programming\code\tetris\main.cpp
+	<bits/stdc++.h>
+	<SDL.h>
+	<SDL_ttf.h>
+	"game.h"
+
+1713231119 c:\users\admin\desktop\uet\advanced programming\code\tetris\grid.h
+	<vector>
+	<SDL.h>
+
+1713270332 source:c:\users\admin\desktop\uet\advanced programming\code\tetris\grid.cpp
+	"grid.h"
+	<iostream>
+	"colors.h"
+
+1713453925 source:c:\users\admin\desktop\uet\advanced programming\code\tetris\colors.cpp
+	"colors.h"
+	<vector>
+
+1713430869 c:\users\admin\desktop\uet\advanced programming\code\tetris\colors.h
+	<vector>
+	<SDL.h>
+
+1712976763 source:c:\users\admin\desktop\uet\advanced programming\code\tetris\position.cpp
+	"position.h"
+
+1712976756 c:\users\admin\desktop\uet\advanced programming\code\tetris\position.h
+
+1713270366 source:c:\users\admin\desktop\uet\advanced programming\code\tetris\block.cpp
+	"block.h"
+
+1713160570 c:\users\admin\desktop\uet\advanced programming\code\tetris\block.h
+	<vector>
+	<map>
+	"position.h"
+	"colors.h"
+
+1712978469 c:\users\admin\desktop\uet\advanced programming\code\tetris\blocks.cpp
+	"block.h"
+	"position.h"
+
+1712978469 source:c:\users\admin\desktop\uet\advanced programming\code\tetris\blocks.cpp
+	"block.h"
+	"position.h"
+
+1713453570 source:c:\users\admin\desktop\uet\advanced programming\code\tetris\game.cpp
+	"game.h"
+	"colors.h"
+
+1713452577 c:\users\admin\desktop\uet\advanced programming\code\tetris\game.h
+	"grid.h"
+	"blocks.cpp"
+	<SDL_ttf.h>
+
+1713412190 c:\users\admin\desktop\uet\advanced programming\code\tetris\sdl.cpp
+	"sdl.h"
+
+1713412197 c:\users\admin\desktop\uet\advanced programming\code\tetris\sdl.h
+	<bits/stdc++.h>
+	<SDL.h>
+
+1713433565 source:c:\users\admin\desktop\uet\advanced programming\code\tetris\display.cpp
+	"display.h"
+
+1713433706 c:\users\admin\desktop\uet\advanced programming\code\tetris\display.h
+	<SDL.h>
+
