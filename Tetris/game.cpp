@@ -5,20 +5,22 @@ using namespace std;
 
 Game::Game(SDL_Renderer* renderer)
 {
+    score = 0;
     InitInterface(renderer);
     grid = Grid();
     blocks = GetAllBlocks();
     currentBlock = GetRandomBlock();
-    nextBlock = GetRandomBlock();
+    nextBlock1 = GetRandomBlock();
+    nextBlock2 = GetRandomBlock();
     for (int i = 0; i < SDL_NUM_SCANCODES; ++i) {
         keyProcessed[i] = false;
     }
     gameOver = false;
+    notHold = true;
 }
 
 void Game::InitInterface(SDL_Renderer* renderer)
 {
-    SDL2_Font sdl2Font;
     sdl2Font.font = TTF_OpenFont("monogram.ttf", 50);
     sdl2Font.color = white;
 
@@ -47,6 +49,11 @@ void Game::InitInterface(SDL_Renderer* renderer)
     end_rect.w = 199;
     end_rect.h = 50;
 
+    score_rect.x = 650;
+    score_rect.y = 430;
+    score_rect.w = 200;
+    score_rect.h = 50;
+
     nextSurface = TTF_RenderText_Blended(sdl2Font.font, "NEXT", sdl2Font.color);
     nextTexture = SDL_CreateTextureFromSurface(renderer, nextSurface);
     nextRect = {715, 1, nextSurface->w, nextSurface->h};
@@ -66,6 +73,16 @@ void Game::InitInterface(SDL_Renderer* renderer)
     endSurface = TTF_RenderText_Blended(sdl2Font.font, "GAME OVER", sdl2Font.color);
     endTexture = SDL_CreateTextureFromSurface(renderer, endSurface);
     endRect = {365, 280, endSurface->w, endSurface->h};
+}
+
+void Game::DisplayScore(SDL_Renderer* renderer)
+{
+    sprintf(scoreText, "%d", score);
+    TTF_SizeText(sdl2Font.font, scoreText, &textWidth, &textHeight);
+    pointSurface = TTF_RenderText_Blended(sdl2Font.font, scoreText, sdl2Font.color);
+    pointTexture = SDL_CreateTextureFromSurface(renderer, pointSurface);
+    pointRect = {665 + (170 - textWidth) / 2, 430, pointSurface->w, pointSurface->h};
+    SDL_RenderCopy(renderer, pointTexture, NULL, &pointRect);
 }
 
 Block Game::GetRandomBlock()
@@ -89,19 +106,53 @@ void Game::Draw(SDL_Renderer* renderer)
     SDL_SetRenderDrawColor(renderer, 44, 44, 127, 255);
     SDL_RenderClear(renderer);
 
-    SDL_RenderCopy(renderer, nextTexture, NULL, &nextRect);
-    SDL_RenderCopy(renderer, scoreTexture, NULL, &scoreRect);
-    SDL_RenderCopy(renderer, levelTexture, NULL, &levelRect);
-    SDL_RenderCopy(renderer, holdTexture, NULL, &holdRect);
-
     SDL_SetRenderDrawColor(renderer, 59, 85, 162, 255);
     SDL_RenderFillRect(renderer, &next_rect);
     SDL_RenderFillRect(renderer, &score_rect);
     SDL_RenderFillRect(renderer, &level_rect);
     SDL_RenderFillRect(renderer, &hold_rect);
 
+    SDL_RenderCopy(renderer, nextTexture, NULL, &nextRect);
+    SDL_RenderCopy(renderer, scoreTexture, NULL, &scoreRect);
+    SDL_RenderCopy(renderer, levelTexture, NULL, &levelRect);
+    SDL_RenderCopy(renderer, holdTexture, NULL, &holdRect);
+
+    DisplayScore(renderer);
     grid.Draw(renderer);
-    currentBlock.Draw(renderer);
+    currentBlock.Draw(renderer, 300, 10);
+    switch (nextBlock1.id) {
+        case 3:
+            nextBlock1.Draw(renderer, 602, 113);
+            break;
+        case 4:
+            nextBlock1.Draw(renderer, 602, 96);
+            break;
+        default:
+            nextBlock1.Draw(renderer, 615, 100);
+            break;
+    }
+    switch (nextBlock2.id) {
+        case 3:
+        case 4:
+            nextBlock2.Draw(renderer, 602, 240);
+            break;
+        default:
+            nextBlock2.Draw(renderer, 615, 240);
+            break;
+    }
+    if (notReset) {
+        switch (holdBlock.id) {
+            case 3:
+                holdBlock.DisplayHoldBlock(renderer, 91, 83);
+                break;
+            case 4:
+                holdBlock.DisplayHoldBlock(renderer, 121, 96);
+                break;
+            default:
+                holdBlock.DisplayHoldBlock(renderer, 106, 96);
+                break;
+        }
+    }
 
     if (gameOver) {
         SDL_SetRenderDrawColor(renderer, 59, 85, 162, 255);
@@ -138,6 +189,7 @@ void Game::HandleInput(SDL_Event event)
             case SDL_SCANCODE_DOWN:
                 if (!keyProcessed[SDL_SCANCODE_DOWN]) {
                     MoveBlockDown();
+                    UpdateScore(0, 1);
                     keyProcessed[SDL_SCANCODE_DOWN] = true;
                 }
                 break;
@@ -153,14 +205,22 @@ void Game::HandleInput(SDL_Event event)
                     while (check) {
                         if (!gameOver) {
                             currentBlock.Move(1,0);
+                            UpdateScore(0, 1);
                             if (IsBlockOutside() || BlockFits() == false) {
                                 currentBlock.Move(-1,0);
+                                UpdateScore(0, -1);
                                 LockBlock();
                                 check = false;
                             }
                         }
                     }
                     keyProcessed[SDL_SCANCODE_SPACE] = true;
+                }
+                break;
+            case SDL_SCANCODE_C:
+                if (!keyProcessed[SDL_SCANCODE_C]) {
+                    HoldBlock();
+                    keyProcessed[SDL_SCANCODE_C] = true;
                 }
                 break;
         }
@@ -225,12 +285,14 @@ void Game::LockBlock()
     for (Position item : tiles) {
         grid.grid[item.row][item.column] = currentBlock.id;
     }
-    currentBlock = nextBlock;
+    currentBlock = nextBlock1;
+    nextBlock1 = nextBlock2;
     if (BlockFits() == false) {
         gameOver = true;
     }
-    nextBlock = GetRandomBlock();
-    grid.ClearFullRows();
+    nextBlock2 = GetRandomBlock();
+    int rowsCleared = grid.ClearFullRows();
+    UpdateScore(rowsCleared, 0);
 }
 
 bool Game::BlockFits()
@@ -248,6 +310,47 @@ void Game::Reset()
 {
     blocks = GetAllBlocks();
     currentBlock = GetRandomBlock();
-    nextBlock = GetRandomBlock();
+    nextBlock1 = GetRandomBlock();
+    nextBlock2 = GetRandomBlock();
     grid.Initialize();
+    score = 0;
+    notHold = true;
+    notReset = false;
+}
+
+void Game::UpdateScore(int linesCleared, int moveDownPoints)
+{
+    switch (linesCleared) {
+    case 1:
+        score += 100;
+        break;
+    case 2:
+        score += 300;
+        break;
+    case 3:
+        score += 500;
+        break;
+    case 4:
+        score += 1000;
+        break;
+    default:
+        break;
+    }
+    score += moveDownPoints;
+}
+
+void Game::HoldBlock()
+{
+    notReset = true;
+    if (!notHold) {
+        temp = holdBlock;
+        holdBlock = currentBlock;
+        currentBlock = temp;
+    } else {
+        holdBlock = currentBlock;
+        currentBlock = nextBlock1;
+        nextBlock1 = nextBlock2;
+        nextBlock2 = GetRandomBlock();
+        notHold = false;
+    }
 }

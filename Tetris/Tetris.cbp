@@ -39,7 +39,9 @@
 		<Unit filename="blocks.cpp" />
 		<Unit filename="colors.cpp" />
 		<Unit filename="colors.h" />
-		<Unit filename="display.cpp" />
+		<Unit filename="display.cpp">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
 		<Unit filename="display.h" />
 		<Unit filename="game.cpp" />
 		<Unit filename="game.h" />

@@ -39,7 +39,11 @@ int main(int argc, char* argv[])
             }
             game.HandleInput(event);
         }
-        if (EventTriggered(1000)) game.MoveBlockDown();
+
+        if (EventTriggered(1000)) {
+            game.MoveBlockDown();
+            game.UpdateScore(0, 1);
+        }
 
         game.Draw(renderer);
     }

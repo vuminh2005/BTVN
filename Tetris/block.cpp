@@ -11,12 +11,22 @@ Block::Block()
     columnOffset = 0;
 }
 
-void Block::Draw(SDL_Renderer* renderer)
+void Block::Draw(SDL_Renderer* renderer, int offsetX, int offsetY)
 {
     vector<Position> tiles = GetCellPositions();
     for (Position item : tiles) {
         SDL_SetRenderDrawColor(renderer, colors[id].r, colors[id].g, colors[id].b, colors[id].a);
-        SDL_Rect rectangle = {item.column * cellSize + 300, item.row * cellSize + 10, cellSize - 1, cellSize - 1};
+        SDL_Rect rectangle = {item.column * cellSize + offsetX, item.row * cellSize + offsetY, cellSize - 1, cellSize - 1};
+        SDL_RenderFillRect(renderer, &rectangle);
+    }
+}
+
+void Block::DisplayHoldBlock(SDL_Renderer* renderer, int offsetX, int offsetY)
+{
+    vector<Position> tiles = cells[0];
+    for (Position item : tiles) {
+        SDL_SetRenderDrawColor(renderer, colors[id].r, colors[id].g, colors[id].b, colors[id].a);
+        SDL_Rect rectangle = {item.column * cellSize + offsetX, item.row * cellSize + offsetY, cellSize - 1, cellSize - 1};
         SDL_RenderFillRect(renderer, &rectangle);
     }
 }

@@ -9,7 +9,8 @@ using namespace std;
 class Block {
 public:
     Block();
-    void Draw(SDL_Renderer* renderer);
+    void Draw(SDL_Renderer* renderer, int offsetX, int offsetY);
+    void DisplayHoldBlock(SDL_Renderer* renderer, int offsetX, int offsetY);
     void Move(int rows, int columns);
     vector<Position> GetCellPositions();
     void Rotate();

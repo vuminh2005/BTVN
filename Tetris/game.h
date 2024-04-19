@@ -14,28 +14,32 @@ class Game
 {
 public:
     Game(SDL_Renderer* renderer);
-    Grid grid;
-    Block GetRandomBlock();
-    vector<Block> GetAllBlocks();
     void Draw(SDL_Renderer* renderer);
     void HandleInput(SDL_Event event);
-    void MoveBlockLeft();
-    void MoveBlockRight();
     void MoveBlockDown();
     bool gameOver;
     void InitInterface(SDL_Renderer* renderer);
+    int score;
+    char scoreText[10];
+    int textWidth, textHeight;
+    void UpdateScore(int linesCleared, int moveDownPoints);
+    void DisplayScore(SDL_Renderer* renderer);
+
+    SDL2_Font sdl2Font;
 
     SDL_Surface* nextSurface;
     SDL_Surface* scoreSurface;
     SDL_Surface* levelSurface;
     SDL_Surface* holdSurface;
     SDL_Surface* endSurface;
+    SDL_Surface* pointSurface;
 
     SDL_Texture* nextTexture;
     SDL_Texture* scoreTexture;
     SDL_Texture* levelTexture;
     SDL_Texture* holdTexture;
     SDL_Texture* endTexture;
+    SDL_Texture* pointTexture;
 
     SDL_Rect next_rect;
     SDL_Rect score_rect;
@@ -48,14 +52,26 @@ public:
     SDL_Rect levelRect;
     SDL_Rect holdRect;
     SDL_Rect endRect;
+    SDL_Rect pointRect;
 private:
+    Grid grid;
+    Block GetRandomBlock();
+    vector<Block> GetAllBlocks();
     vector<Block> blocks;
     Block currentBlock;
-    Block nextBlock;
+    Block nextBlock1;
+    Block nextBlock2;
+    Block holdBlock;
+    Block temp;
     bool keyProcessed[SDL_NUM_SCANCODES];
+    void MoveBlockLeft();
+    void MoveBlockRight();
     bool IsBlockOutside();
     void RotateBlock();
     void LockBlock();
+    void HoldBlock();
     bool BlockFits();
     void Reset();
+    bool notHold;
+    bool notReset;
 };
