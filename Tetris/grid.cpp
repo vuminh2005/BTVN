@@ -88,6 +88,7 @@ int Grid::ClearFullRows()
         if (IsRowFull(row)) {
             ClearRow(row);
             completed++;
+            linesCompleted++;
         } else if (completed > 0) {
             MoveRowDown(row, completed);
         }
