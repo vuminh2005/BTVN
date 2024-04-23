@@ -270,8 +270,6 @@ void Game::CleanTutorial()
     SDL_DestroyTexture(spaceTexture);
     SDL_DestroyTexture(cTexture);
     SDL_DestroyTexture(rTexture);
-
-    currentBlock.Move(-1, 0);
 }
 
 void Game::HandleInput(SDL_Event event)
@@ -329,7 +327,7 @@ void Game::HandleInput(SDL_Event event)
                 }
                 break;
             case SDL_SCANCODE_C:
-                if (!keyProcessed[SDL_SCANCODE_C]) {
+                if (!keyProcessed[SDL_SCANCODE_C] && !gameOver) {
                     HoldBlock();
                     keyProcessed[SDL_SCANCODE_C] = true;
                 }
