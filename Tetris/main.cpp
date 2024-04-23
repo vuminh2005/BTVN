@@ -32,19 +32,19 @@ int main(int argc, char* argv[])
     bool quit = false;
     SDL_Event event;
 
+    while (game.tutorial) {
+        while (SDL_PollEvent(&event) != 0) {
+            game.HandleInput(event);
+        }
+        game.Tutorial(renderer);
+    }
+
     while (!quit) {
         while (SDL_PollEvent(&event) != 0) {
             if (event.type == SDL_QUIT) {
                 quit = true;
             }
             game.HandleInput(event);
-        }
-
-        while (game.tutorial) {
-            game.Tutorial(renderer);
-            while (SDL_PollEvent(&event) != 0) {
-                game.HandleInput(event);
-            }
         }
 
         if (EventTriggered(1150 - game.level * 100)) {

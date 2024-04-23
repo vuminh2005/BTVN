@@ -6,7 +6,8 @@
 
 using namespace std;
 
-class Block {
+class Block
+{
 public:
     Block();
     void Draw(SDL_Renderer* renderer, int offsetX, int offsetY);

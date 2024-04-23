@@ -5,10 +5,11 @@ using namespace std;
 
 Game::Game(SDL_Renderer* renderer)
 {
-    gameOver = false;
-    notHold = true;
+    Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);
     IMG_Init(IMG_INIT_JPG);
     TTF_Init();
+    gameOver = false;
+    notHold = true;
     sdl2Font.font = TTF_OpenFont("monogram.ttf", 50);
     sdl2Font.color = white;
     score = 0;
@@ -22,7 +23,6 @@ Game::Game(SDL_Renderer* renderer)
     for (int i = 0; i < SDL_NUM_SCANCODES; ++i) {
         keyProcessed[i] = false;
     }
-    Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);
     music = Mix_LoadMUS("good-night-160166.mp3");
     Mix_PlayMusic(music, -1);
 }
@@ -245,6 +245,32 @@ void Game::Tutorial(SDL_Renderer* renderer)
     SDL_RenderPresent(renderer);
 
     currentBlock.Move(0, -1);
+
+    if (!tutorial) {
+        SDL_FreeSurface(enterSurface);
+        SDL_FreeSurface(moveSurface);
+        SDL_FreeSurface(rotateSurface);
+        SDL_FreeSurface(dropSurface);
+        SDL_FreeSurface(switchSurface);
+        SDL_FreeSurface(resetSurface);
+        SDL_FreeSurface(arrowSurface);
+        SDL_FreeSurface(upSurface);
+        SDL_FreeSurface(spaceSurface);
+        SDL_FreeSurface(cSurface);
+        SDL_FreeSurface(rSurface);
+
+        SDL_DestroyTexture(enterTexture);
+        SDL_DestroyTexture(moveTexture);
+        SDL_DestroyTexture(rotateTexture);
+        SDL_DestroyTexture(dropTexture);
+        SDL_DestroyTexture(switchTexture);
+        SDL_DestroyTexture(resetTexture);
+        SDL_DestroyTexture(arrowTexture);
+        SDL_DestroyTexture(upTexture);
+        SDL_DestroyTexture(spaceTexture);
+        SDL_DestroyTexture(cTexture);
+        SDL_DestroyTexture(rTexture);
+    }
 }
 
 void Game::HandleInput(SDL_Event event)
@@ -422,6 +448,7 @@ void Game::Reset()
     nextBlock2 = GetRandomBlock();
     grid.Initialize();
     score = 0;
+    level = 0;
     grid.linesCompleted = 0;
     notHold = true;
     notReset = false;
