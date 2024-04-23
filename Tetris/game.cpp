@@ -13,6 +13,7 @@ Game::Game(SDL_Renderer* renderer)
     sdl2Font.font = TTF_OpenFont("monogram.ttf", 50);
     sdl2Font.color = white;
     score = 0;
+    level = 0;
     InitInterface(renderer);
     grid = Grid();
     grid.linesCompleted = 0;
@@ -173,57 +174,56 @@ void Game::Draw(SDL_Renderer* renderer)
     SDL_RenderPresent(renderer);
 }
 
-void Game::Tutorial(SDL_Renderer* renderer)
+void Game::DisplayTutorial(SDL_Renderer* renderer)
 {
-    SDL_Rect tutorial_rect;
     tutorial_rect.x = 200;
     tutorial_rect.y = 160;
     tutorial_rect.w = 500;
     tutorial_rect.h = 300;
 
-    SDL_Surface* enterSurface = TTF_RenderText_Blended(sdl2Font.font, "ENTER", sdl2Font.color);
-    SDL_Texture* enterTexture = SDL_CreateTextureFromSurface(renderer, enterSurface);
-    SDL_Rect enterRect = {400, 415, enterSurface->w, enterSurface->h};
+    enterSurface = TTF_RenderText_Blended(sdl2Font.font, "ENTER", sdl2Font.color);
+    enterTexture = SDL_CreateTextureFromSurface(renderer, enterSurface);
+    enterRect = {400, 415, enterSurface->w, enterSurface->h};
 
-    SDL_Surface* moveSurface = TTF_RenderText_Blended(sdl2Font.font, "Move", sdl2Font.color);
-    SDL_Texture* moveTexture = SDL_CreateTextureFromSurface(renderer, moveSurface);
-    SDL_Rect moveRect = {220, 170, moveSurface->w, moveSurface->h};
+    moveSurface = TTF_RenderText_Blended(sdl2Font.font, "Move", sdl2Font.color);
+    moveTexture = SDL_CreateTextureFromSurface(renderer, moveSurface);
+    moveRect = {220, 170, moveSurface->w, moveSurface->h};
 
-    SDL_Surface* rotateSurface = TTF_RenderText_Blended(sdl2Font.font, "Rotate", sdl2Font.color);
-    SDL_Texture* rotateTexture = SDL_CreateTextureFromSurface(renderer, rotateSurface);
-    SDL_Rect rotateRect = {220, 215, rotateSurface->w, rotateSurface->h};
+    rotateSurface = TTF_RenderText_Blended(sdl2Font.font, "Rotate", sdl2Font.color);
+    rotateTexture = SDL_CreateTextureFromSurface(renderer, rotateSurface);
+    rotateRect = {220, 215, rotateSurface->w, rotateSurface->h};
 
-    SDL_Surface* dropSurface = TTF_RenderText_Blended(sdl2Font.font, "Drop", sdl2Font.color);
-    SDL_Texture* dropTexture = SDL_CreateTextureFromSurface(renderer, dropSurface);
-    SDL_Rect dropRect = {220, 260, dropSurface->w, dropSurface->h};
+    dropSurface = TTF_RenderText_Blended(sdl2Font.font, "Drop", sdl2Font.color);
+    dropTexture = SDL_CreateTextureFromSurface(renderer, dropSurface);
+    dropRect = {220, 260, dropSurface->w, dropSurface->h};
 
-    SDL_Surface* switchSurface = TTF_RenderText_Blended(sdl2Font.font, "Hold", sdl2Font.color);
-    SDL_Texture* switchTexture = SDL_CreateTextureFromSurface(renderer, switchSurface);
-    SDL_Rect switchRect = {220, 305, switchSurface->w, switchSurface->h};
+    switchSurface = TTF_RenderText_Blended(sdl2Font.font, "Hold", sdl2Font.color);
+    switchTexture = SDL_CreateTextureFromSurface(renderer, switchSurface);
+    switchRect = {220, 305, switchSurface->w, switchSurface->h};
 
-    SDL_Surface* resetSurface = TTF_RenderText_Blended(sdl2Font.font, "Replay", sdl2Font.color);
-    SDL_Texture* resetTexture = SDL_CreateTextureFromSurface(renderer, resetSurface);
-    SDL_Rect resetRect = {220, 350, resetSurface->w, resetSurface->h};
+    resetSurface = TTF_RenderText_Blended(sdl2Font.font, "Replay", sdl2Font.color);
+    resetTexture = SDL_CreateTextureFromSurface(renderer, resetSurface);
+    resetRect = {220, 350, resetSurface->w, resetSurface->h};
 
-    SDL_Surface* arrowSurface = TTF_RenderText_Blended(sdl2Font.font, "Left/Down/Right", sdl2Font.color);
-    SDL_Texture* arrowTexture = SDL_CreateTextureFromSurface(renderer, arrowSurface);
-    SDL_Rect arrowRect = {390, 170, arrowSurface->w, arrowSurface->h};
+    arrowSurface = TTF_RenderText_Blended(sdl2Font.font, "Left/Down/Right", sdl2Font.color);
+    arrowTexture = SDL_CreateTextureFromSurface(renderer, arrowSurface);
+    arrowRect = {390, 170, arrowSurface->w, arrowSurface->h};
 
-    SDL_Surface* upSurface = TTF_RenderText_Blended(sdl2Font.font, "Up", sdl2Font.color);
-    SDL_Texture* upTexture = SDL_CreateTextureFromSurface(renderer, upSurface);
-    SDL_Rect upRect = {390, 215, upSurface->w, upSurface->h};
+    upSurface = TTF_RenderText_Blended(sdl2Font.font, "Up", sdl2Font.color);
+    upTexture = SDL_CreateTextureFromSurface(renderer, upSurface);
+    upRect = {390, 215, upSurface->w, upSurface->h};
 
-    SDL_Surface* spaceSurface = TTF_RenderText_Blended(sdl2Font.font, "Space", sdl2Font.color);
-    SDL_Texture* spaceTexture = SDL_CreateTextureFromSurface(renderer, spaceSurface);
-    SDL_Rect spaceRect = {390, 260, spaceSurface->w, spaceSurface->h};
+    spaceSurface = TTF_RenderText_Blended(sdl2Font.font, "Space", sdl2Font.color);
+    spaceTexture = SDL_CreateTextureFromSurface(renderer, spaceSurface);
+    spaceRect = {390, 260, spaceSurface->w, spaceSurface->h};
 
-    SDL_Surface* cSurface = TTF_RenderText_Blended(sdl2Font.font, "C", sdl2Font.color);
-    SDL_Texture* cTexture = SDL_CreateTextureFromSurface(renderer, cSurface);
-    SDL_Rect cRect = {390, 305, cSurface->w, cSurface->h};
+    cSurface = TTF_RenderText_Blended(sdl2Font.font, "C", sdl2Font.color);
+    cTexture = SDL_CreateTextureFromSurface(renderer, cSurface);
+    cRect = {390, 305, cSurface->w, cSurface->h};
 
-    SDL_Surface* rSurface = TTF_RenderText_Blended(sdl2Font.font, "R (After G.Over)", sdl2Font.color);
-    SDL_Texture* rTexture = SDL_CreateTextureFromSurface(renderer, rSurface);
-    SDL_Rect rRect = {390, 350, rSurface->w, rSurface->h};
+    rSurface = TTF_RenderText_Blended(sdl2Font.font, "R (After G.Over)", sdl2Font.color);
+    rTexture = SDL_CreateTextureFromSurface(renderer, rSurface);
+    rRect = {390, 350, rSurface->w, rSurface->h};
 
     SDL_SetRenderDrawColor(renderer, 44, 44, 127, 255);
     SDL_RenderClear(renderer);
@@ -243,34 +243,35 @@ void Game::Tutorial(SDL_Renderer* renderer)
     SDL_RenderCopy(renderer, rTexture, NULL, &rRect);
 
     SDL_RenderPresent(renderer);
+}
 
-    currentBlock.Move(0, -1);
+void Game::CleanTutorial()
+{
+    SDL_FreeSurface(enterSurface);
+    SDL_FreeSurface(moveSurface);
+    SDL_FreeSurface(rotateSurface);
+    SDL_FreeSurface(dropSurface);
+    SDL_FreeSurface(switchSurface);
+    SDL_FreeSurface(resetSurface);
+    SDL_FreeSurface(arrowSurface);
+    SDL_FreeSurface(upSurface);
+    SDL_FreeSurface(spaceSurface);
+    SDL_FreeSurface(cSurface);
+    SDL_FreeSurface(rSurface);
 
-    if (!tutorial) {
-        SDL_FreeSurface(enterSurface);
-        SDL_FreeSurface(moveSurface);
-        SDL_FreeSurface(rotateSurface);
-        SDL_FreeSurface(dropSurface);
-        SDL_FreeSurface(switchSurface);
-        SDL_FreeSurface(resetSurface);
-        SDL_FreeSurface(arrowSurface);
-        SDL_FreeSurface(upSurface);
-        SDL_FreeSurface(spaceSurface);
-        SDL_FreeSurface(cSurface);
-        SDL_FreeSurface(rSurface);
+    SDL_DestroyTexture(enterTexture);
+    SDL_DestroyTexture(moveTexture);
+    SDL_DestroyTexture(rotateTexture);
+    SDL_DestroyTexture(dropTexture);
+    SDL_DestroyTexture(switchTexture);
+    SDL_DestroyTexture(resetTexture);
+    SDL_DestroyTexture(arrowTexture);
+    SDL_DestroyTexture(upTexture);
+    SDL_DestroyTexture(spaceTexture);
+    SDL_DestroyTexture(cTexture);
+    SDL_DestroyTexture(rTexture);
 
-        SDL_DestroyTexture(enterTexture);
-        SDL_DestroyTexture(moveTexture);
-        SDL_DestroyTexture(rotateTexture);
-        SDL_DestroyTexture(dropTexture);
-        SDL_DestroyTexture(switchTexture);
-        SDL_DestroyTexture(resetTexture);
-        SDL_DestroyTexture(arrowTexture);
-        SDL_DestroyTexture(upTexture);
-        SDL_DestroyTexture(spaceTexture);
-        SDL_DestroyTexture(cTexture);
-        SDL_DestroyTexture(rTexture);
-    }
+    currentBlock.Move(-1, 0);
 }
 
 void Game::HandleInput(SDL_Event event)

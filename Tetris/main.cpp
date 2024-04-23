@@ -36,7 +36,8 @@ int main(int argc, char* argv[])
         while (SDL_PollEvent(&event) != 0) {
             game.HandleInput(event);
         }
-        game.Tutorial(renderer);
+        game.DisplayTutorial(renderer);
+        if (!game.tutorial) game.CleanTutorial();
     }
 
     while (!quit) {

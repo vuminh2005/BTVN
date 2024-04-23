@@ -30,7 +30,8 @@ public:
     char speedText[3];
     int speedWidth, speedHeight;
     void DisplayLevel(SDL_Renderer* renderer);
-    void Tutorial(SDL_Renderer* renderer);
+    void DisplayTutorial(SDL_Renderer* renderer);
+    void CleanTutorial();
     bool tutorial = true;
     void Clean();
 
@@ -68,6 +69,52 @@ public:
     SDL_Rect endRect;
     SDL_Rect pointRect;
     SDL_Rect speedRect;
+
+    SDL_Rect tutorial_rect;
+
+    SDL_Surface* enterSurface;
+    SDL_Texture* enterTexture;
+    SDL_Rect enterRect;
+
+    SDL_Surface* moveSurface;
+    SDL_Texture* moveTexture;
+    SDL_Rect moveRect;
+
+    SDL_Surface* rotateSurface;
+    SDL_Texture* rotateTexture;
+    SDL_Rect rotateRect;
+
+    SDL_Surface* dropSurface;
+    SDL_Texture* dropTexture;
+    SDL_Rect dropRect;
+
+    SDL_Surface* switchSurface;
+    SDL_Texture* switchTexture;
+    SDL_Rect switchRect;
+
+    SDL_Surface* resetSurface;
+    SDL_Texture* resetTexture;
+    SDL_Rect resetRect;
+
+    SDL_Surface* arrowSurface;
+    SDL_Texture* arrowTexture;
+    SDL_Rect arrowRect;
+
+    SDL_Surface* upSurface;
+    SDL_Texture* upTexture;
+    SDL_Rect upRect;
+
+    SDL_Surface* spaceSurface;
+    SDL_Texture* spaceTexture;
+    SDL_Rect spaceRect;
+
+    SDL_Surface* cSurface;
+    SDL_Texture* cTexture;
+    SDL_Rect cRect;
+
+    SDL_Surface* rSurface;
+    SDL_Texture* rTexture;
+    SDL_Rect rRect;
 private:
     Grid grid;
     Block GetRandomBlock();
