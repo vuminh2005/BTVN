@@ -25,6 +25,7 @@ Game::Game(SDL_Renderer* renderer)
         keyProcessed[i] = false;
     }
     music = Mix_LoadMUS("good-night-160166.mp3");
+    Mix_VolumeMusic(MIX_MAX_VOLUME / 2);
     Mix_PlayMusic(music, -1);
 }
 
@@ -55,10 +56,10 @@ void Game::InitInterface(SDL_Renderer* renderer)
     end_rect.w = 199;
     end_rect.h = 50;
 
-    wjpu_rect.x = 50;
-    wjpu_rect.y = 235;
-    wjpu_rect.w = 200;
-    wjpu_rect.h = 370;
+    logo_rect.x = 50;
+    logo_rect.y = 407;
+    logo_rect.w = 200;
+    logo_rect.h = 200;
 
     nextSurface = TTF_RenderText_Blended(sdl2Font.font, "NEXT", sdl2Font.color);
     nextTexture = SDL_CreateTextureFromSurface(renderer, nextSurface);
@@ -80,7 +81,7 @@ void Game::InitInterface(SDL_Renderer* renderer)
     endTexture = SDL_CreateTextureFromSurface(renderer, endSurface);
     endRect = {365, 280, endSurface->w, endSurface->h};
 
-    wjpuTexture = IMG_LoadTexture(renderer, "kawaii.jpg");
+    logoTexture = IMG_LoadTexture(renderer, "logo.jpg");
 }
 
 void Game::DisplayScore(SDL_Renderer* renderer)
@@ -117,12 +118,12 @@ void Game::Draw(SDL_Renderer* renderer)
     SDL_RenderCopy(renderer, scoreTexture, NULL, &scoreRect);
     SDL_RenderCopy(renderer, levelTexture, NULL, &levelRect);
     SDL_RenderCopy(renderer, holdTexture, NULL, &holdRect);
-    SDL_RenderCopy(renderer, wjpuTexture, NULL, &wjpu_rect);
+    SDL_RenderCopy(renderer, logoTexture, NULL, &logo_rect);
 
     DisplayScore(renderer);
 
-    if (level <= 10) level = grid.linesCompleted / 5 + 1;
-    if (level != 11) sprintf(speedText, "%d", level);
+    if (level <= 9) level = grid.linesCompleted / 5 + 1;
+    if (level != 10) sprintf(speedText, "%d", level);
     else sprintf(speedText, "%s", "MAX");
     DisplayLevel(renderer);
 
@@ -509,11 +510,12 @@ void Game::Clean()
     SDL_DestroyTexture(endTexture);
     SDL_DestroyTexture(pointTexture);
     SDL_DestroyTexture(speedTexture);
-    SDL_DestroyTexture(wjpuTexture);
+    SDL_DestroyTexture(logoTexture);
 
     TTF_CloseFont(sdl2Font.font);
     TTF_Quit();
     Mix_FreeMusic(music);
+    Mix_CloseAudio();
     Mix_Quit();
     IMG_Quit();
     SDL_Quit();

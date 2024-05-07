@@ -1,9 +1,10 @@
-#include <bits/stdc++.h>
 #include <SDL.h>
 #include <SDL_ttf.h>
 #include <SDL_mixer.h>
 #include <SDL_image.h>
 #include "game.h"
+#include <chrono>
+#include <iostream>
 
 using namespace std;
 
@@ -34,6 +35,10 @@ int main(int argc, char* argv[])
 
     while (game.tutorial) {
         while (SDL_PollEvent(&event) != 0) {
+            if (event.type == SDL_QUIT) {
+                quit = true;
+                game.tutorial = false;
+            }
             game.HandleInput(event);
         }
         game.DisplayTutorial(renderer);
@@ -62,3 +67,5 @@ int main(int argc, char* argv[])
 
     return 0;
 }
+
+// Fix switch: boolean in LockBlock, count row moved => move back when switch

@@ -53,14 +53,14 @@ public:
     SDL_Texture* endTexture;
     SDL_Texture* pointTexture;
     SDL_Texture* speedTexture;
-    SDL_Texture* wjpuTexture;
+    SDL_Texture* logoTexture;
 
     SDL_Rect next_rect;
     SDL_Rect score_rect;
     SDL_Rect level_rect;
     SDL_Rect hold_rect;
     SDL_Rect end_rect;
-    SDL_Rect wjpu_rect;
+    SDL_Rect logo_rect;
 
     SDL_Rect nextRect;
     SDL_Rect scoreRect;
