@@ -211,6 +211,7 @@ void Game::Draw(SDL_Renderer* renderer)
     DisplayLevel(renderer);
 
     grid.Draw(renderer);
+    currentBlock.DrawGhost(renderer, 300, 10, grid);
     currentBlock.Draw(renderer, 300, 10);
 
     switch (nextBlock1.id) {
@@ -389,7 +390,6 @@ void Game::HandleInput(SDL_Event event)
             case SDL_SCANCODE_DOWN:
                 if (!keyProcessed[SDL_SCANCODE_DOWN]) {
                     MoveBlockDown();
-                    UpdateScore(0, 1);
                     keyProcessed[SDL_SCANCODE_DOWN] = true;
                 }
                 break;
@@ -404,10 +404,8 @@ void Game::HandleInput(SDL_Event event)
                     bool check = true;
                     while (check) {
                         currentBlock.Move(1,0);
-                        UpdateScore(0, 1);
                         if (IsBlockOutside() || BlockFits() == false) {
                             currentBlock.Move(-1,0);
-                            UpdateScore(0, -1);
                             LockBlock();
                             check = false;
                         }
@@ -416,8 +414,9 @@ void Game::HandleInput(SDL_Event event)
                 }
                 break;
             case SDL_SCANCODE_C:
-                if (!keyProcessed[SDL_SCANCODE_C] && !gameOver) {
+                if (!keyProcessed[SDL_SCANCODE_C] && hold) {
                     HoldBlock();
+                    hold = false;
                     keyProcessed[SDL_SCANCODE_C] = true;
                 }
                 break;
@@ -513,8 +512,9 @@ void Game::LockBlock()
         gameOver = true;
     }
     nextBlock2 = GetRandomBlock();
+    hold = true;
     int rowsCleared = grid.ClearFullRows();
-    UpdateScore(rowsCleared, 0);
+    UpdateScore(rowsCleared);
 }
 
 bool Game::BlockFits()
@@ -544,7 +544,7 @@ void Game::Reset()
     update = true;
 }
 
-void Game::UpdateScore(int linesCleared, int moveDownPoints)
+void Game::UpdateScore(int linesCleared)
 {
     if (!gameOver) {
         switch (linesCleared) {
@@ -563,7 +563,6 @@ void Game::UpdateScore(int linesCleared, int moveDownPoints)
             default:
                 break;
             }
-        score += moveDownPoints;
     }
 }
 
@@ -574,6 +573,9 @@ void Game::HoldBlock()
         temp = holdBlock;
         holdBlock = currentBlock;
         currentBlock = temp;
+        currentBlock.rowOffset = 0;
+        currentBlock.columnOffset = 3;
+        if (currentBlock.id == 3) currentBlock.Move(-1, 0);
     } else {
         holdBlock = currentBlock;
         currentBlock = nextBlock1;

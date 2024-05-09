@@ -55,7 +55,6 @@ int main(int argc, char* argv[])
 
         if (EventTriggered(1150 - game.level * 100)) {
             game.MoveBlockDown();
-            game.UpdateScore(0, 1);
         }
 
         game.Draw(renderer);
@@ -67,5 +66,3 @@ int main(int argc, char* argv[])
 
     return 0;
 }
-
-// Fix switch: boolean in LockBlock, count row moved => move back when switch

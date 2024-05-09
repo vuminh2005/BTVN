@@ -23,10 +23,11 @@ public:
     void HandleInput(SDL_Event event);
     void MoveBlockDown();
     bool gameOver;
+    bool hold = true;
     void InitInterface(SDL_Renderer* renderer);
     void InitTutorial(SDL_Renderer* renderer);
     int textWidth, textHeight;
-    void UpdateScore(int linesCleared, int moveDownPoints);
+    void UpdateScore(int linesCleared);
     void DisplayScore(SDL_Renderer* renderer);
     int level;
     char speedText[3];
