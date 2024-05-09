@@ -4,6 +4,9 @@
 #include <SDL_ttf.h>
 #include <SDL_mixer.h>
 #include <SDL_image.h>
+#include <fstream>
+#include <iostream>
+#include <algorithm>
 
 using namespace std;
 
@@ -21,8 +24,7 @@ public:
     void MoveBlockDown();
     bool gameOver;
     void InitInterface(SDL_Renderer* renderer);
-    int score;
-    char scoreText[10];
+    void InitTutorial(SDL_Renderer* renderer);
     int textWidth, textHeight;
     void UpdateScore(int linesCleared, int moveDownPoints);
     void DisplayScore(SDL_Renderer* renderer);
@@ -33,7 +35,16 @@ public:
     void DisplayTutorial(SDL_Renderer* renderer);
     void CleanTutorial();
     bool tutorial = true;
+    int score;
+    char scoreText[10];
+    int highscores[3];
     void Clean();
+    bool Is_empty(ifstream& pFile);
+    bool update = true;
+    void LoadHighScores();
+    void SaveHighScores();
+    void UpdateHighScores();
+    void DisplayHighScores(SDL_Renderer* renderer);
 
     Mix_Music *music;
     SDL2_Font sdl2Font;
@@ -45,6 +56,7 @@ public:
     SDL_Surface* endSurface;
     SDL_Surface* pointSurface;
     SDL_Surface* speedSurface;
+    SDL_Surface* leaderSurface;
 
     SDL_Texture* nextTexture;
     SDL_Texture* scoreTexture;
@@ -54,6 +66,7 @@ public:
     SDL_Texture* pointTexture;
     SDL_Texture* speedTexture;
     SDL_Texture* logoTexture;
+    SDL_Texture* leaderTexture;
 
     SDL_Rect next_rect;
     SDL_Rect score_rect;
@@ -61,6 +74,8 @@ public:
     SDL_Rect hold_rect;
     SDL_Rect end_rect;
     SDL_Rect logo_rect;
+    SDL_Rect tutorial_rect;
+    SDL_Rect leader_rect;
 
     SDL_Rect nextRect;
     SDL_Rect scoreRect;
@@ -69,8 +84,7 @@ public:
     SDL_Rect endRect;
     SDL_Rect pointRect;
     SDL_Rect speedRect;
-
-    SDL_Rect tutorial_rect;
+    SDL_Rect leaderRect;
 
     SDL_Surface* enterSurface;
     SDL_Texture* enterTexture;

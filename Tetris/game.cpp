@@ -14,7 +14,9 @@ Game::Game(SDL_Renderer* renderer)
     sdl2Font.color = white;
     score = 0;
     level = 0;
+    LoadHighScores();
     InitInterface(renderer);
+    InitTutorial(renderer);
     grid = Grid();
     grid.linesCompleted = 0;
     blocks = GetAllBlocks();
@@ -61,6 +63,11 @@ void Game::InitInterface(SDL_Renderer* renderer)
     logo_rect.w = 200;
     logo_rect.h = 200;
 
+    leader_rect.x = 50;
+    leader_rect.y = 255;
+    leader_rect.w = 200;
+    leader_rect.h = 138;
+
     nextSurface = TTF_RenderText_Blended(sdl2Font.font, "NEXT", sdl2Font.color);
     nextTexture = SDL_CreateTextureFromSurface(renderer, nextSurface);
     nextRect = {715, 1, nextSurface->w, nextSurface->h};
@@ -75,11 +82,15 @@ void Game::InitInterface(SDL_Renderer* renderer)
 
     holdSurface = TTF_RenderText_Blended(sdl2Font.font, "HOLD", sdl2Font.color);
     holdTexture = SDL_CreateTextureFromSurface(renderer, holdSurface);
-    holdRect = {115, 1, holdSurface->w, holdSurface->h};
+    holdRect = {112, 1, holdSurface->w, holdSurface->h};
 
     endSurface = TTF_RenderText_Blended(sdl2Font.font, "GAME OVER", sdl2Font.color);
     endTexture = SDL_CreateTextureFromSurface(renderer, endSurface);
     endRect = {365, 280, endSurface->w, endSurface->h};
+
+    leaderSurface = TTF_RenderText_Blended(sdl2Font.font, "TOPSCORE", sdl2Font.color);
+    leaderTexture = SDL_CreateTextureFromSurface(renderer, leaderSurface);
+    leaderRect = {75, 205, leaderSurface->w, leaderSurface->h};
 
     logoTexture = IMG_LoadTexture(renderer, "logo.jpg");
 }
@@ -103,6 +114,76 @@ void Game::DisplayLevel(SDL_Renderer* renderer)
     SDL_RenderCopy(renderer, speedTexture, NULL, &speedRect);
 }
 
+bool Game::Is_empty(ifstream& pFile)
+{
+    return pFile.peek() == ifstream::traits_type::eof();
+}
+
+void Game::LoadHighScores()
+{
+    ifstream input("Score.txt", std::ios::app);
+    if (Is_empty(input)) {
+        for (int i = 0; i < 3; i++) {
+            highscores[i] = 0;
+        }
+    } else {
+        for (int i = 0; i < 3; i++) {
+            if (!(input >> highscores[i])) {
+                break;
+            }
+        }
+        input.close();
+    }
+}
+
+void Game::SaveHighScores()
+{
+    ofstream output("Score.txt", std::ios::trunc);
+    for (int i = 0; i < 3; i++) {
+        output << highscores[i] << endl;
+    }
+    output.close();
+}
+
+void Game::UpdateHighScores() {
+    int insertIndex = -1;
+    for (int i = 0; i < 3; i++) {
+        if (score > highscores[i]) {
+            insertIndex = i;
+            break;
+        }
+    }
+
+    if (insertIndex != -1) {
+        for (int j = 2; j > insertIndex; j--) {
+            highscores[j] = highscores[j - 1];
+        }
+        highscores[insertIndex] = score;
+    }
+
+    SaveHighScores();
+}
+
+void Game::DisplayHighScores(SDL_Renderer* renderer) {
+    SDL_Surface* tempSurface = nullptr;
+    SDL_Texture* tempTexture = nullptr;
+    for (int i = 0; i < 3; ++i) {
+        char highscoreText[10];
+        if (highscores[i] < 10) sprintf_s(highscoreText, "%d. 00000%d", i + 1, highscores[i]);
+        else if (highscores[i] < 100) sprintf_s(highscoreText, "%d. 0000%d", i + 1, highscores[i]);
+        else if (highscores[i] < 1000) sprintf_s(highscoreText, "%d. 000%d", i + 1, highscores[i]);
+        else if (highscores[i] < 10000) sprintf_s(highscoreText, "%d. 00%d", i + 1, highscores[i]);
+        else if (highscores[i] < 100000) sprintf_s(highscoreText, "%d. 0%d", i + 1, highscores[i]);
+        else sprintf_s(highscoreText, "%d. %d", i + 1, highscores[i]);
+        tempSurface = TTF_RenderText_Blended(sdl2Font.font, highscoreText, sdl2Font.color);
+        tempTexture = SDL_CreateTextureFromSurface(renderer, tempSurface);
+        SDL_Rect highscoreRect = {66, 256 + i * 45, tempSurface->w, tempSurface->h};
+        SDL_RenderCopy(renderer, tempTexture, NULL, &highscoreRect);
+        SDL_FreeSurface(tempSurface);
+        SDL_DestroyTexture(tempTexture);
+    }
+}
+
 void Game::Draw(SDL_Renderer* renderer)
 {
     SDL_SetRenderDrawColor(renderer, 44, 44, 127, 255);
@@ -113,12 +194,14 @@ void Game::Draw(SDL_Renderer* renderer)
     SDL_RenderFillRect(renderer, &score_rect);
     SDL_RenderFillRect(renderer, &level_rect);
     SDL_RenderFillRect(renderer, &hold_rect);
+    SDL_RenderFillRect(renderer, &leader_rect);
 
     SDL_RenderCopy(renderer, nextTexture, NULL, &nextRect);
     SDL_RenderCopy(renderer, scoreTexture, NULL, &scoreRect);
     SDL_RenderCopy(renderer, levelTexture, NULL, &levelRect);
     SDL_RenderCopy(renderer, holdTexture, NULL, &holdRect);
     SDL_RenderCopy(renderer, logoTexture, NULL, &logo_rect);
+    SDL_RenderCopy(renderer, leaderTexture, NULL, &leaderRect);
 
     DisplayScore(renderer);
 
@@ -166,16 +249,20 @@ void Game::Draw(SDL_Renderer* renderer)
         }
     }
 
+    DisplayHighScores(renderer);
+
     if (gameOver) {
+        if (update) UpdateHighScores();
         SDL_SetRenderDrawColor(renderer, 59, 85, 162, 255);
         SDL_RenderFillRect(renderer, &end_rect);
         SDL_RenderCopy(renderer, endTexture, NULL, &endRect);
+        update = false;
     }
 
     SDL_RenderPresent(renderer);
 }
 
-void Game::DisplayTutorial(SDL_Renderer* renderer)
+void Game::InitTutorial(SDL_Renderer* renderer)
 {
     tutorial_rect.x = 200;
     tutorial_rect.y = 160;
@@ -225,7 +312,10 @@ void Game::DisplayTutorial(SDL_Renderer* renderer)
     rSurface = TTF_RenderText_Blended(sdl2Font.font, "R (After G.Over)", sdl2Font.color);
     rTexture = SDL_CreateTextureFromSurface(renderer, rSurface);
     rRect = {390, 350, rSurface->w, rSurface->h};
+}
 
+void Game::DisplayTutorial(SDL_Renderer* renderer)
+{
     SDL_SetRenderDrawColor(renderer, 44, 44, 127, 255);
     SDL_RenderClear(renderer);
 
@@ -282,7 +372,7 @@ void Game::HandleInput(SDL_Event event)
         }
     }
 
-    if (event.type == SDL_KEYDOWN) {
+    if (event.type == SDL_KEYDOWN && !gameOver) {
         switch (event.key.keysym.scancode) {
             case SDL_SCANCODE_LEFT:
                 if (!keyProcessed[SDL_SCANCODE_LEFT]) {
@@ -313,15 +403,13 @@ void Game::HandleInput(SDL_Event event)
                 if (!keyProcessed[SDL_SCANCODE_SPACE]) {
                     bool check = true;
                     while (check) {
-                        if (!gameOver) {
-                            currentBlock.Move(1,0);
-                            UpdateScore(0, 1);
-                            if (IsBlockOutside() || BlockFits() == false) {
-                                currentBlock.Move(-1,0);
-                                UpdateScore(0, -1);
-                                LockBlock();
-                                check = false;
-                            }
+                        currentBlock.Move(1,0);
+                        UpdateScore(0, 1);
+                        if (IsBlockOutside() || BlockFits() == false) {
+                            currentBlock.Move(-1,0);
+                            UpdateScore(0, -1);
+                            LockBlock();
+                            check = false;
                         }
                     }
                     keyProcessed[SDL_SCANCODE_SPACE] = true;
@@ -452,6 +540,8 @@ void Game::Reset()
     grid.linesCompleted = 0;
     notHold = true;
     notReset = false;
+    LoadHighScores();
+    update = true;
 }
 
 void Game::UpdateScore(int linesCleared, int moveDownPoints)
@@ -502,6 +592,7 @@ void Game::Clean()
     SDL_FreeSurface(endSurface);
     SDL_FreeSurface(pointSurface);
     SDL_FreeSurface(speedSurface);
+    SDL_FreeSurface(leaderSurface);
 
     SDL_DestroyTexture(nextTexture);
     SDL_DestroyTexture(scoreTexture);
@@ -511,6 +602,7 @@ void Game::Clean()
     SDL_DestroyTexture(pointTexture);
     SDL_DestroyTexture(speedTexture);
     SDL_DestroyTexture(logoTexture);
+    SDL_DestroyTexture(leaderTexture);
 
     TTF_CloseFont(sdl2Font.font);
     TTF_Quit();
