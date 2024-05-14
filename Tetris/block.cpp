@@ -27,7 +27,7 @@ void Block::DrawGhost(SDL_Renderer* renderer, int offsetX, int offsetY, Grid& gr
     for (Position item : ghostTiles) {
         SDL_SetRenderDrawColor(renderer, 192, 192, 192, 255);
         SDL_Rect rectangle = {item.column * cellSize + 300, item.row * cellSize + 10, cellSize - 1, cellSize - 1};
-        SDL_RenderFillRect(renderer, &rectangle);
+        SDL_RenderDrawRect(renderer, &rectangle);
     }
 }
 

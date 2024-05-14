@@ -53,11 +53,11 @@ int main(int argc, char* argv[])
             game.HandleInput(event);
         }
 
-        if (EventTriggered(1150 - game.level * 100)) {
+        game.Draw(renderer);
+
+        if (EventTriggered(1050 - game.level * 100)) {
             game.MoveBlockDown();
         }
-
-        game.Draw(renderer);
     }
 
     SDL_DestroyRenderer(renderer);
@@ -66,3 +66,6 @@ int main(int argc, char* argv[])
 
     return 0;
 }
+
+// sound
+// line cleared effect
